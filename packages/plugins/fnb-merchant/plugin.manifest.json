@@ -1,0 +1,51 @@
+{
+  "id": "fnb-merchant",
+  "name": "FnB Merchant",
+  "version": "1.0.0",
+  "description": "FnB menu and order management for merchant",
+  "type": "segment-plugin",
+  "author": "Closepay Team",
+  "dependencies": ["balance", "payment"],
+  "exports": {
+    "components": [],
+    "hooks": [],
+    "models": [],
+    "screens": {
+      "FnB": "FnBScreen",
+      "FnBMenuManage": "FnBMenuManageScreen",
+      "FnBOrderInbox": "FnBOrderInboxScreen",
+      "FnBOrderDetail": "FnBOrderDetailScreen"
+    }
+  },
+  "routes": [
+    {
+      "name": "FnB",
+      "path": "/fnb-merchant",
+      "component": "FnBScreen",
+      "permissions": ["read:fnb-merchant", "write:fnb-merchant"],
+      "meta": { "title": "FnB", "showInMenu": true }
+    },
+    {
+      "name": "FnBMenuManage",
+      "path": "/fnb-merchant/menu",
+      "component": "FnBMenuManageScreen",
+      "permissions": ["read:fnb-merchant", "write:fnb-merchant"],
+      "meta": { "title": "Kelola Menu FnB", "showInMenu": true }
+    },
+    {
+      "name": "FnBOrderInbox",
+      "path": "/fnb-merchant/orders",
+      "component": "FnBOrderInboxScreen",
+      "permissions": ["read:fnb-merchant"],
+      "meta": { "title": "Order FnB", "showInMenu": true }
+    },
+    {
+      "name": "FnBOrderDetail",
+      "path": "/fnb-merchant/orders/:id",
+      "component": "FnBOrderDetailScreen",
+      "permissions": ["read:fnb-merchant"],
+      "meta": { "title": "Detail Order FnB", "showInMenu": false }
+    }
+  ],
+  "permissions": ["read:fnb-merchant", "write:fnb-merchant"]
+}

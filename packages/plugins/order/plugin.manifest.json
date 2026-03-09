@@ -1,0 +1,47 @@
+{
+  "id": "order",
+  "name": "Order Management",
+  "version": "1.0.0",
+  "description": "Order processing, tracking, and management system",
+  "type": "segment-plugin",
+  "author": "Closepay Team",
+  "dependencies": ["payment"],
+  "exports": {
+    "components": [],
+    "hooks": [],
+    "models": [],
+    "screens": {
+      "Order": "OrderScreen",
+      "OrderList": "OrderListScreen",
+      "OrderDetail": "OrderDetailScreen"
+    }
+  },
+  "routes": [
+    {
+      "name": "Order",
+      "path": "/order",
+      "component": "OrderScreen",
+      "permissions": ["order:view"],
+      "meta": { "title": "Order", "showInMenu": true }
+    },
+    {
+      "name": "OrderList",
+      "path": "/order/list",
+      "component": "OrderListScreen",
+      "permissions": ["order:view"],
+      "meta": { "title": "Orders", "showInMenu": true }
+    },
+    {
+      "name": "OrderDetail",
+      "path": "/order/:id",
+      "component": "OrderDetailScreen",
+      "permissions": ["order:view"],
+      "meta": { "title": "Order Detail", "showInMenu": false }
+    }
+  ],
+  "permissions": [
+    "order:view",
+    "order:create",
+    "order:manage"
+  ]
+}

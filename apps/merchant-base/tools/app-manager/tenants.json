@@ -1,0 +1,19 @@
+{
+  "merchant-base": {
+    "id": "merchant-base",
+    "companyInitial": "MB",
+    "appName": "Merchant Closepay",
+    "packageName": "com.closepay.merchantbase",
+    "logoPath": "assets/logo.png",
+    "homeVariant": "dashboard",
+    "enabledFeatures": [],
+    "homeTabs": [
+      {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "visible": true,
+        "order": 1
+      }
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "balance": {
+    "id": "balance",
+    "label": "Balance Ledger",
+    "description": "Core ledger plugin"
+  },
+  "payment": {
+    "id": "payment",
+    "label": "Payment Gateway",
+    "description": "Universal payment plugin"
+  },
+  "invoice": {
+    "id": "invoice",
+    "label": "Invoice",
+    "description": "Invoice generation and management"
+  },
+  "catalog": {
+    "id": "catalog",
+    "label": "Catalog",
+    "description": "Product/catalog management (merchant)"
+  },
+  "order": {
+    "id": "order",
+    "label": "Order Management",
+    "description": "Order processing and tracking (merchant)"
+  },
+  "fnb-merchant": {
+    "id": "fnb-merchant",
+    "label": "FnB Merchant",
+    "description": "FnB menu and order management (merchant)"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "id": "kso",
+  "name": "KSO",
+  "version": "1.0.0",
+  "description": "Kerja Sama Operasional (Operational Cooperation) management",
+  "type": "segment-plugin",
+  "author": "Closepay Team",
+  "dependencies": ["payment"],
+  "exports": {
+    "components": [],
+    "hooks": [],
+    "models": [],
+    "screens": {
+      "KSO": "KSOScreen",
+      "KsoList": "KsoListScreen",
+      "KsoDetail": "KsoDetailScreen",
+      "KsoCreate": "KsoCreateScreen",
+      "KsoEdit": "KsoEditScreen",
+      "KsoTransaction": "KsoTransactionScreen",
+      "KsoHistory": "KsoHistoryScreen"
+    }
+  },
+  "routes": [
+    {
+      "name": "KSO",
+      "path": "/kso",
+      "component": "KSOScreen",
+      "permissions": ["read:kso"],
+      "meta": { "title": "KSO", "showInMenu": true }
+    },
+    {
+      "name": "KsoList",
+      "path": "/kso/list",
+      "component": "KsoListScreen",
+      "permissions": ["read:kso"],
+      "meta": { "title": "Daftar KSO", "showInMenu": false }
+    },
+    {
+      "name": "KsoDetail",
+      "path": "/kso/:id",
+      "component": "KsoDetailScreen",
+      "permissions": ["read:kso"],
+      "meta": { "title": "Detail KSO", "showInMenu": false }
+    },
+    {
+      "name": "KsoCreate",
+      "path": "/kso/create",
+      "component": "KsoCreateScreen",
+      "permissions": ["write:kso"],
+      "meta": { "title": "Tambah KSO", "showInMenu": false }
+    },
+    {
+      "name": "KsoEdit",
+      "path": "/kso/:id/edit",
+      "component": "KsoEditScreen",
+      "permissions": ["write:kso"],
+      "meta": { "title": "Edit KSO", "showInMenu": false }
+    },
+    {
+      "name": "KsoTransaction",
+      "path": "/kso/:ksoId/transactions",
+      "component": "KsoTransactionScreen",
+      "permissions": ["read:kso"],
+      "meta": { "title": "Transaksi KSO", "showInMenu": false }
+    },
+    {
+      "name": "KsoHistory",
+      "path": "/kso/history",
+      "component": "KsoHistoryScreen",
+      "permissions": ["read:kso"],
+      "meta": { "title": "Riwayat KSO", "showInMenu": false }
+    }
+  ],
+  "permissions": ["read:kso", "write:kso", "kso:manage"]
+}

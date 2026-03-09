@@ -1,0 +1,67 @@
+{
+  "expo": {
+    "name": "Merchant Closepay",
+    "slug": "merchant-closepay-expo",
+    "projectId": "828900b1-74b1-40f8-85ae-3eba6a407514",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Aplikasi memerlukan kamera untuk scan QR dan mengambil foto profil.",
+        "NSPhotoLibraryUsageDescription": "Aplikasi memerlukan akses galeri untuk memilih foto profil.",
+        "NSMicrophoneUsageDescription": "Aplikasi memerlukan mikrofon untuk merekam video.",
+        "NFCReaderUsageDescription": "Aplikasi menggunakan NFC untuk pembayaran."
+      },
+      "bundleIdentifier": "com.closepay.merchantbase"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.NFC",
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_SCAN",
+        "android.permission.BLUETOOTH_CONNECT",
+        "android.permission.BLUETOOTH_ADMIN"
+      ],
+      "package": "com.closepay.merchantbase"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store"
+    ],
+    "extra": {
+      "API_BASE_URL": "",
+      "API_STG_BASE_URL": "",
+      "API_PROD_BASE_URL": "",
+      "ENV": "development",
+      "ANDROID_CERTIFICATE_HASH": "",
+      "IOS_APP_TEAM_ID": "",
+      "TALSEC_WATCHER_MAIL": "",
+      "SUPPORT_WHATSAPP_NUMBER": "",
+      "SUPPORT_EMAIL": "",
+      "ANDROID_PACKAGE_NAME": "",
+      "IOS_BUNDLE_ID": "",
+      "eas": {
+        "projectId": "7caefdd5-0ce4-46e4-a30d-8662f2ed1504"
+      }
+    },
+    "owner": "rikoarik"
+  }
+}

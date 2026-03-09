@@ -1,0 +1,59 @@
+{
+  "id": "catalog",
+  "name": "Catalog",
+  "version": "1.0.0",
+  "description": "Product and catalog management for merchant",
+  "type": "segment-plugin",
+  "author": "Closepay Team",
+  "dependencies": ["balance"],
+  "exports": {
+    "components": [],
+    "hooks": [],
+    "models": [],
+    "screens": {
+      "Product": "ProductScreen",
+      "ProductList": "ProductListScreen",
+      "ProductCreate": "ProductCreateScreen",
+      "ProductEdit": "ProductEditScreen",
+      "CategoryList": "CategoryListScreen"
+    }
+  },
+  "routes": [
+    {
+      "name": "Product",
+      "path": "/catalog/products",
+      "component": "ProductScreen",
+      "permissions": ["read:catalog"],
+      "meta": { "title": "Produk", "showInMenu": true }
+    },
+    {
+      "name": "ProductList",
+      "path": "/catalog/products",
+      "component": "ProductListScreen",
+      "permissions": ["read:catalog"],
+      "meta": { "title": "Products", "showInMenu": true }
+    },
+    {
+      "name": "ProductCreate",
+      "path": "/catalog/products/create",
+      "component": "ProductCreateScreen",
+      "permissions": ["write:catalog"],
+      "meta": { "title": "Add Product", "showInMenu": false }
+    },
+    {
+      "name": "ProductEdit",
+      "path": "/catalog/products/:id/edit",
+      "component": "ProductEditScreen",
+      "permissions": ["write:catalog"],
+      "meta": { "title": "Edit Product", "showInMenu": false }
+    },
+    {
+      "name": "CategoryList",
+      "path": "/catalog/categories",
+      "component": "CategoryListScreen",
+      "permissions": ["read:catalog"],
+      "meta": { "title": "Categories", "showInMenu": true }
+    }
+  ],
+  "permissions": ["read:catalog", "write:catalog"]
+}

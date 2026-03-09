@@ -1,0 +1,110 @@
+{
+    "id": "balance",
+    "name": "Balance Management",
+    "version": "1.0.0",
+    "description": "Core balance management features including transaction history and balance tracking",
+    "type": "core-plugin",
+    "author": "Closepay Team",
+    "dependencies": [],
+    "exports": {
+        "components": [
+            "BalanceDetailScreen",
+            "TransactionHistoryScreen",
+            "WithdrawIcon",
+            "TopUpIcon",
+            "BalanceCard"
+        ],
+        "hooks": [
+            "useBalance"
+        ],
+        "services": [
+            "balanceService",
+            "mutationService"
+        ],
+        "models": [
+            "TransactionType",
+            "BalanceAccount",
+            "BalanceMutation"
+        ],
+        "screens": {
+            "Balance": "BalanceScreen",
+            "BalanceDetail": "BalanceDetailScreen",
+            "TransactionHistory": "TransactionHistoryScreen"
+        },
+        "tabs": {
+            "balance": "BalanceTab",
+            "saldo": "BalanceTab",
+            "balance-main": "BalanceMainTab",
+            "saldo-utama": "BalanceMainTab",
+            "balance-plafon": "BalancePlafonTab",
+            "saldo-plafon": "BalancePlafonTab",
+            "balance-meal": "BalanceMealTab",
+            "saldo-makan": "BalanceMealTab",
+            "balance-history": "BalanceHistoryTab",
+            "riwayat-saldo": "BalanceHistoryTab",
+            "balance-transfer": "BalanceTransferTab",
+            "transfer-saldo": "BalanceTransferTab",
+            "balance-topup": "BalanceTopupTab",
+            "topup-saldo": "BalanceTopupTab",
+            "transaction-history": "TransactionHistoryTab",
+            "riwayat-transaksi": "TransactionHistoryTab",
+            "transaction-all": "TransactionAllTab",
+            "semua-transaksi": "TransactionAllTab",
+            "transaction-card": "TransactionCardTab",
+            "transaksi-kartu-only": "TransactionCardTab"
+        },
+        "widgets": {
+            "activity-summary": "ActivitySummary",
+            "savings-goal": "SavingsGoal",
+            "recent-transactions": "RecentTransactions"
+        }
+    },
+    "tabs": [
+        { "id": "balance", "component": "BalanceTab", "labelKey": "balance.home", "order": 1 }
+    ],
+    "quickMenuItems": [
+        { "id": "balance-detail", "component": "BalanceDetailScreen", "labelKey": "balance.detail", "order": 1, "route": "BalanceDetail" }
+    ],
+    "routes": [
+        {
+            "name": "Balance",
+            "path": "/balance",
+            "component": "BalanceScreen",
+            "permissions": [
+                "read:balance"
+            ],
+            "meta": {
+                "title": "Balance",
+                "showInMenu": true
+            }
+        },
+        {
+            "name": "BalanceDetail",
+            "path": "/balance/detail",
+            "component": "BalanceDetailScreen",
+            "permissions": [
+                "read:balance"
+            ],
+            "meta": {
+                "title": "Balance Detail",
+                "showInMenu": false
+            }
+        },
+        {
+            "name": "TransactionHistory",
+            "path": "/balance/history",
+            "component": "TransactionHistoryScreen",
+            "permissions": [
+                "read:balance"
+            ],
+            "meta": {
+                "title": "Transaction History",
+                "showInMenu": false
+            }
+        }
+    ],
+    "permissions": [
+        "read:balance",
+        "write:balance"
+    ]
+}

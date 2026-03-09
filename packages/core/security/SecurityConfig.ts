@@ -1,0 +1,69 @@
+import { Platform } from 'react-native';
+
+import Config from '../native/Config';
+
+/** Local type compatible with FreeRASP config (avoids requiring freerasp at load time). */
+export interface SecurityConfigShape {
+  androidConfig?: { packageName: string; certificateHashes: string[]; [k: string]: unknown };
+  iosConfig: { appBundleId: string; appTeamId: string };
+  watcherMail: string;
+  isProd: boolean;
+}
+
+const isProduction = Config.ENV === 'production';
+const certificateHashes = Config.ANDROID_CERTIFICATE_HASH
+  ? [Config.ANDROID_CERTIFICATE_HASH]
+  : [];
+
+const defaultPackageName = Config.ANDROID_PACKAGE_NAME || (Config.ENV === 'staging' ? 'com.solusinegeri.app.staging' : 'com.solusinegeri.app');
+const androidConfigBase = {
+  packageName: defaultPackageName,
+  supportedAlternativeStores: [
+    'com.android.vending',
+    'com.huawei.appmarket',
+    'com.sec.android.app.samsungapps',
+  ],
+  malwareConfig: {
+    blacklistedPackageNames: [] as string[],
+    blacklistedHashes: [] as string[],
+    suspiciousPermissions: [
+      ['android.permission.CAMERA', 'android.permission.RECORD_AUDIO'],
+      ['android.permission.READ_SMS', 'android.permission.SEND_SMS'],
+    ] as string[][],
+    whitelistedInstallationSources: [
+      'com.android.vending',
+      'com.huawei.appmarket',
+    ] as string[],
+  },
+};
+
+export const shouldInitializeFreeRasp = certificateHashes.length > 0 || Platform.OS === 'ios';
+
+const androidConfig = certificateHashes.length > 0
+  ? { ...androidConfigBase, certificateHashes }
+  : undefined;
+
+export const securityConfig: SecurityConfigShape = {
+  ...(androidConfig ? { androidConfig } : {}),
+  iosConfig: {
+    appBundleId: Config.IOS_BUNDLE_ID || 'com.solusinegeri.app',
+    appTeamId: Config.IOS_APP_TEAM_ID || '',
+  },
+  watcherMail: Config.TALSEC_WATCHER_MAIL || '',
+  isProd: isProduction,
+};
+
+/**
+ * Helper to convert security config to native-friendly format
+ * Used by native modules to build Talsec configuration
+ */
+export const getNativeSecurityConfig = () => {
+  return {
+    packageName: defaultPackageName,
+    certificateHashes: certificateHashes,
+    isProd: isProduction,
+    watcherMail: Config.TALSEC_WATCHER_MAIL || '',
+    appBundleId: Config.IOS_BUNDLE_ID || 'com.solusinegeri.app',
+    appTeamId: Config.IOS_APP_TEAM_ID || '',
+  };
+};

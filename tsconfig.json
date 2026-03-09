@@ -1,0 +1,16 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@core/*": ["packages/core/*"],
+      "@experience-core": ["packages/experience-core"],
+      "@experience-core/*": ["packages/experience-core/*"],
+      "@plugins/*": ["packages/plugins/*"],
+      "@app/*": ["apps/member-base/src/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "android", "ios"]
+}
