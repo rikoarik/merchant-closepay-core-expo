@@ -11,6 +11,7 @@ import {
   Modal,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@core/theme';
 import { ScreenHeader, getHorizontalPadding } from '@core/config';
 import { useTranslation } from '@core/i18n';
@@ -95,7 +96,7 @@ export const CategoryListScreen: React.FC = () => {
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
       <ScreenHeader
         title={t('merchant.products') ? 'Kategori' : 'Kategori'}
         rightComponent={
@@ -158,7 +159,7 @@ export const CategoryListScreen: React.FC = () => {
           </View>
         </TouchableOpacity>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 

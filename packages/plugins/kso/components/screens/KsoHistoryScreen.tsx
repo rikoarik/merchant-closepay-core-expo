@@ -8,6 +8,7 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '@core/theme';
 import { ScreenHeader, getHorizontalPadding } from '@core/config';
@@ -46,7 +47,7 @@ export const KsoHistoryScreen: React.FC = () => {
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
       <ScreenHeader title={t('kso.history') || 'Riwayat KSO'} />
       {error ? (
         <View style={styles.center}>
@@ -77,7 +78,7 @@ export const KsoHistoryScreen: React.FC = () => {
           }
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 

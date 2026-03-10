@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@core/theme';
 import { ScreenHeader, getHorizontalPadding } from '@core/config';
@@ -60,7 +61,7 @@ export const ProductCreateScreen: React.FC = () => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
       <ScreenHeader title={t('merchant.products') ? 'Tambah Produk' : 'Tambah Produk'} />
       <ScrollView
         style={styles.scroll}
@@ -122,7 +123,7 @@ export const ProductCreateScreen: React.FC = () => {
           )}
         </TouchableOpacity>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

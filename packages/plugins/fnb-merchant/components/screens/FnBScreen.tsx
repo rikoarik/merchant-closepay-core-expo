@@ -6,6 +6,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { FnBMenuManageScreen } from './FnBMenuManageScreen';
+import { FnBMenuFormScreen } from './FnBMenuFormScreen';
 import { FnBOrderInboxScreen } from './FnBOrderInboxScreen';
 import { FnBOrderDetailScreen } from './FnBOrderDetailScreen';
 
@@ -21,6 +22,7 @@ export const FnBScreen = () => {
       initialRouteName="FnBMenuManage"
     >
       <Stack.Screen name="FnBMenuManage" component={FnBMenuManageScreen} />
+      <Stack.Screen name="FnBMenuForm" component={FnBMenuFormScreen} />
       <Stack.Screen name="FnBOrderInbox" component={FnBOrderInboxScreen} />
       <Stack.Screen name="FnBOrderDetail" component={FnBOrderDetailScreen} />
     </Stack.Navigator>

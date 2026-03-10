@@ -8,7 +8,7 @@
       "@experience-core": ["packages/experience-core"],
       "@experience-core/*": ["packages/experience-core/*"],
       "@plugins/*": ["packages/plugins/*"],
-      "@app/*": ["apps/member-base/src/*"]
+      "@app/*": ["apps/merchant-base/src/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],

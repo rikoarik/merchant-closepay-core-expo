@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@core/theme';
 import { ScreenHeader, getHorizontalPadding } from '@core/config';
@@ -60,7 +61,7 @@ export const KsoCreateScreen: React.FC = () => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
       <ScreenHeader title={t('kso.create') || 'Tambah KSO'} />
       <ScrollView
         style={styles.scroll}
@@ -151,7 +152,7 @@ export const KsoCreateScreen: React.FC = () => {
           {saving ? <ActivityIndicator color={colors.surface} /> : <Text style={[styles.btnText, { color: colors.surface }]}>{t('common.save') || 'Simpan'}</Text>}
         </TouchableOpacity>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

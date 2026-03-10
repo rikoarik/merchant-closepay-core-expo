@@ -13,6 +13,7 @@ import fnbMerchant from '@plugins/fnb-merchant';
 import kso from '@plugins/kso';
 
 export function bootstrapPlugins(): void {
+  if (PluginRegistry.hasRegisteredPlugins()) return;
   PluginRegistry.registerPlugins([balance, payment, invoice, catalog, order, fnbMerchant, kso]);
 
   if (__DEV__) {

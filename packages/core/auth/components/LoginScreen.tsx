@@ -36,6 +36,7 @@ import {
   ErrorModal,
   getAppVersionAsync,
   useConfig,
+  useDimensions,
 } from '@core/config';
 import { useTheme } from '@core/theme';
 import { useTranslation } from '@core/i18n';
@@ -198,31 +199,49 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   const horizontalPadding = getHorizontalPadding();
   const verticalPadding = getVerticalPadding();
   const screenHeight = Dimensions.get('window').height;
+  const { width: viewportWidth, isTablet } = useDimensions();
+  const TABLET_BREAKPOINT = 768;
+  const isTabletOrWeb = viewportWidth >= TABLET_BREAKPOINT;
+  const contentMaxWidth = isTabletOrWeb ? 520 : 440;
 
-  return (
+  const rightPanel = isTabletOrWeb ? (
+    <View style={styles.rightColumn}>
+      <View style={styles.rightPanelBlob1} />
+      <View style={styles.rightPanelBlob2} />
+      <View style={styles.rightPanelCard}>
+        <View style={styles.rightPanelCardAvatars}>
+          {[1, 2, 3, 4].map((i) => (
+            <View key={i} style={[styles.rightPanelAvatar, i === 1 && styles.rightPanelAvatarFirst]} />
+          ))}
+          <Text style={styles.rightPanelCardAvatarsLabel}>+ 100 others</Text>
+        </View>
+        <Text style={styles.rightPanelCardTitle}>
+          {t('auth.analyticTransaction') || 'Analytic Transaction'}
+        </Text>
+        <View style={styles.rightPanelOptions}>
+          <View style={styles.rightPanelOption}>
+            <View style={styles.rightPanelRadioSelected} />
+            <Text style={styles.rightPanelOptionText}>
+              {t('auth.analyticMonitoring') || 'Monitoring my transaction'}
+            </Text>
+          </View>
+          <View style={styles.rightPanelOption}>
+            <View style={styles.rightPanelRadio} />
+            <Text style={styles.rightPanelOptionText}>
+              {t('auth.analyticCompanyBenefit') || 'Manage Company Benefit'}
+            </Text>
+          </View>
+        </View>
+        <Text style={styles.rightPanelCardDesc}>
+          {t('auth.analyticTransactionDesc') ||
+            'Systematic and insightful, makes it easy for you to manage your platform efficiently.'}
+        </Text>
+      </View>
+    </View>
+  ) : null;
 
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Absolute positioned background to ensure full coverage */}
-
-      <KeyboardAwareScrollView
-        ref={scrollViewRef}
-        style={{ flex: 1, backgroundColor: 'transparent' }}
-        contentContainerStyle={[
-          styles.scrollContent,
-          {
-            backgroundColor: 'transparent',
-            flexGrow: 1,
-          },
-        ]}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-        enableOnAndroid={true}
-        enableAutomaticScroll={true}
-        extraScrollHeight={20}>
-
-
-          <View style={styles.pageContainer}>
+  const formContent = (
+    <>
             {/* Top decoration */}
             <View style={styles.logoWrapper}>
               <View style={styles.logoContainer}>
@@ -253,8 +272,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 
               {/* Login Form */}
               <View style={styles.formContainer}>
-                <View style={styles.formSection}>
-                  <Text style={[styles.title, { color: colors.text }]}>{t('auth.login')}</Text>
+                <View style={[styles.formSection, isTabletOrWeb && styles.formSectionCentered]}>
+                  <Text style={[styles.title, { color: colors.text }, isTabletOrWeb && styles.titleCentered]}>
+                    {t('auth.login')}
+                  </Text>
+                  {isTabletOrWeb && (
+                    <Text style={[styles.loginInstruction, { color: colors.textSecondary }]}>
+                      {t('auth.loginSubtitle')}
+                    </Text>
+                  )}
                   <View style={[styles.demoInfoBox, { backgroundColor: colors.infoLight || colors.surfaceSecondary, borderColor: colors.info }]}>
                     <Text style={[styles.demoInfoText, { color: colors.textSecondary }]}>
                       {t('auth.loginDemoInfo')}
@@ -490,9 +516,64 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 </View>
               </View>
             </View>
-          </View>
+    </>
+  );
 
-      </KeyboardAwareScrollView>
+  const scrollContent = (
+    <KeyboardAwareScrollView
+      ref={scrollViewRef}
+      style={{ flex: 1, backgroundColor: 'transparent' }}
+      contentContainerStyle={[
+        styles.scrollContent,
+        { backgroundColor: 'transparent', flexGrow: 1 },
+      ]}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+      bounces={false}
+      enableOnAndroid={true}
+      enableAutomaticScroll={true}
+      extraScrollHeight={20}
+    >
+      <View
+        style={[
+          styles.pageContainer,
+          isTabletOrWeb && {
+            maxWidth: contentMaxWidth,
+            width: '100%',
+            alignSelf: 'center',
+          },
+        ]}
+      >
+        {formContent}
+      </View>
+    </KeyboardAwareScrollView>
+  );
+
+  if (isTabletOrWeb) {
+    return (
+      <SafeAreaView style={[styles.container, styles.containerTabletWeb]}>
+        <View style={styles.loginCardWrapper}>
+          <View style={styles.twoColumnRow}>
+            <View style={[styles.leftColumn, styles.leftColumnCard]}>
+              {scrollContent}
+            </View>
+            {rightPanel}
+          </View>
+        </View>
+        <ErrorModal
+          visible={showErrorModal}
+          title={t('auth.loginFailed')}
+          message={error || t('auth.loginError')}
+          onClose={handleCloseErrorModal}
+          buttonText={t('common.ok')}
+        />
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      {scrollContent}
 
       {/* Error Modal - Only for API response errors */}
       <ErrorModal
@@ -510,7 +591,156 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
+  containerTabletWeb: {
+    backgroundColor: '#e5e7eb',
+  },
+  loginCardWrapper: {
+    flex: 1,
+    marginHorizontal: scale(24),
+    marginVertical: scale(24),
+    maxWidth: 960,
+    alignSelf: 'center',
+    width: '100%',
+    borderRadius: scale(24),
+    overflow: 'hidden',
+    backgroundColor: '#ffffff',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.08,
+        shadowRadius: 16,
+      },
+      android: { elevation: 8 },
+    }),
+  },
+  twoColumnRow: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  leftColumn: {
+    flex: 1.15,
+    minWidth: 0,
+  },
+  leftColumnCard: {
+    backgroundColor: '#ffffff',
+    borderTopLeftRadius: scale(24),
+    borderBottomLeftRadius: scale(24),
+  },
+  rightColumn: {
+    flex: 0.85,
+    minWidth: 0,
+    backgroundColor: '#0f172a',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: scale(20),
+    marginRight: scale(20),
+    marginVertical: scale(20),
+    paddingHorizontal: scale(20),
+    paddingVertical: scale(20),
+    position: 'relative',
+    overflow: 'hidden',
+    borderRadius: scale(20),
+  },
+  rightPanelBlob1: {
+    position: 'absolute',
+    width: scale(320),
+    height: scale(320),
+    borderRadius: scale(160),
+    backgroundColor: 'rgba(59, 130, 246, 0.28)',
+    top: '-15%',
+    left: '-15%',
+    ...Platform.select({
+      ios: { shadowRadius: 100 },
+      android: { elevation: 0 },
+    }),
+  },
+  rightPanelBlob2: {
+    position: 'absolute',
+    width: scale(360),
+    height: scale(360),
+    borderRadius: scale(180),
+    backgroundColor: 'rgba(249, 115, 22, 0.22)',
+    bottom: '-12%',
+    right: '-12%',
+  },
+  rightPanelCard: {
+    backgroundColor: 'rgba(30, 41, 59, 0.75)',
+    borderRadius: scale(24),
+    padding: scale(24),
+    marginHorizontal: scale(24),
+    marginVertical: scale(20),
+    maxWidth: scale(360),
+    width: '100%',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
+    zIndex: 1,
+  },
+  rightPanelCardAvatars: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: moderateVerticalScale(16),
+  },
+  rightPanelAvatar: {
+    width: scale(32),
+    height: scale(32),
+    borderRadius: scale(16),
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    marginLeft: -scale(8),
+    borderWidth: 2,
+    borderColor: 'rgba(30, 41, 59, 0.9)',
+  },
+  rightPanelAvatarFirst: {
+    marginLeft: 0,
+  },
+  rightPanelCardAvatarsLabel: {
+    fontSize: getResponsiveFontSize('small'),
+    fontFamily: FontFamily.monasans.medium,
+    color: 'rgba(255, 255, 255, 0.9)',
+    marginLeft: scale(8),
+  },
+  rightPanelCardTitle: {
+    fontSize: getResponsiveFontSize('xlarge'),
+    fontFamily: FontFamily.monasans.bold,
+    color: '#fff',
+    marginBottom: moderateVerticalScale(16),
+  },
+  rightPanelOptions: {
+    marginBottom: moderateVerticalScale(16),
+  },
+  rightPanelOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: moderateVerticalScale(10),
+  },
+  rightPanelRadio: {
+    width: scale(20),
+    height: scale(20),
+    borderRadius: scale(10),
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+    marginRight: scale(12),
+  },
+  rightPanelRadioSelected: {
+    width: scale(20),
+    height: scale(20),
+    borderRadius: scale(10),
+    backgroundColor: '#22c55e',
+    marginRight: scale(12),
+    borderWidth: 2,
+    borderColor: '#22c55e',
+  },
+  rightPanelOptionText: {
+    fontSize: getResponsiveFontSize('medium'),
+    fontFamily: FontFamily.monasans.regular,
+    color: 'rgba(255, 255, 255, 0.95)',
+  },
+  rightPanelCardDesc: {
+    fontSize: getResponsiveFontSize('medium'),
+    fontFamily: FontFamily.monasans.regular,
+    color: 'rgba(255, 255, 255, 0.88)',
+    lineHeight: moderateScale(24),
+  },
   scrollContent: {
     flexGrow: 1,
     paddingBottom: verticalScale(32),
@@ -567,6 +797,20 @@ const styles = StyleSheet.create({
   },
   formSection: {
     paddingHorizontal: getHorizontalPadding(),
+  },
+  formSectionCentered: {
+    width: '100%',
+  },
+  titleCentered: {
+    textAlign: 'center',
+  },
+  loginInstruction: {
+    fontSize: getResponsiveFontSize('small'),
+    fontFamily: FontFamily.monasans.regular,
+    textAlign: 'center',
+    marginTop: moderateVerticalScale(4),
+    marginBottom: moderateVerticalScale(20),
+    paddingHorizontal: scale(8),
   },
   mainCard: {
     width: '100%',

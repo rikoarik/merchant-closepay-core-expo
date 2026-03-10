@@ -1,9 +1,9 @@
 /**
  * Merchant quick menu icon provider.
- * Mapping for receive-payment, transactions, invoice, withdraw only.
+ * Semua item quickAccessMenu punya icon yang sesuai.
  */
 import React from 'react';
-import { DocumentText, Element3, ScanBarcode } from 'iconsax-react-nativejs';
+import { DocumentText, Element3, ScanBarcode, Shop, Box1 } from 'iconsax-react-nativejs';
 import { getIconSize } from '@core/config';
 import { IconWallet, IconTransfer } from '../home/quick-actions/icons';
 
@@ -26,6 +26,12 @@ export function getMenuIconForQuickAccessMerchant(
       return <DocumentText size={s} color={iconColor} variant={variant} />;
     case 'withdraw':
       return <IconTransfer width={s} height={s} color={iconColor} />;
+    case 'products':
+      return <Shop size={s} color={iconColor} variant={variant} />;
+    case 'orders':
+      return <Box1 size={s} color={iconColor} variant={variant} />;
+    case 'fnb-manage':
+      return <Box1 size={s} color={iconColor} variant={variant} />;
     case 'kso':
       return <DocumentText size={s} color={iconColor} variant={variant} />;
     default:
@@ -41,6 +47,13 @@ export function getMenuIconForQuickAccessMerchant(
       return <DocumentText size={s} color={iconColor} variant={variant} />;
     case 'withdraw':
       return <IconTransfer width={s} height={s} color={iconColor} />;
+    case 'products':
+      return <Shop size={s} color={iconColor} variant={variant} />;
+    case 'orders':
+    case 'fnb':
+      return <Box1 size={s} color={iconColor} variant={variant} />;
+    case 'document':
+      return <DocumentText size={s} color={iconColor} variant={variant} />;
     default:
       return <Element3 size={s} color={iconColor} variant={variant} />;
   }

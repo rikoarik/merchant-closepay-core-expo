@@ -8,6 +8,7 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '@core/theme';
 import { ScreenHeader, getHorizontalPadding } from '@core/config';
@@ -50,7 +51,7 @@ export const KsoTransactionScreen: React.FC = () => {
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
       <ScreenHeader title={t('kso.transaction') || 'Transaksi KSO'} />
       {error ? (
         <View style={styles.center}>
@@ -81,7 +82,7 @@ export const KsoTransactionScreen: React.FC = () => {
           }
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 

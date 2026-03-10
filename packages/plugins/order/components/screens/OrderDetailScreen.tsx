@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,10 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  TextInput,
+  Modal,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useTheme } from '@core/theme';
 import { ScreenHeader, getHorizontalPadding } from '@core/config';
@@ -18,6 +21,8 @@ import type { Order } from '../../models/Order';
 
 type RouteParams = { id?: string };
 
+const MARKETPLACE_STATUS_FLOW: Order['status'][] = ['paid', 'packing', 'shipped', 'completed'];
+
 export const OrderDetailScreen: React.FC = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -25,6 +30,10 @@ export const OrderDetailScreen: React.FC = () => {
   const navigation = useNavigation();
   const id = (route.params as RouteParams)?.id ?? null;
   const { order, isLoading, error, refresh } = useOrderDetail(id);
+  const [shipModalVisible, setShipModalVisible] = useState(false);
+  const [trackingNumber, setTrackingNumber] = useState('');
+  const [courier, setCourier] = useState('');
+  const [saving, setSaving] = useState(false);
 
   const handleStatus = async (status: Order['status']) => {
     if (!id) return;
@@ -48,31 +57,52 @@ export const OrderDetailScreen: React.FC = () => {
     );
   };
 
+  const openShipModal = () => {
+    setTrackingNumber(order?.trackingNumber ?? '');
+    setCourier(order?.courier ?? '');
+    setShipModalVisible(true);
+  };
+
+  const handleMarkShipped = async () => {
+    if (!id) return;
+    try {
+      setSaving(true);
+      await orderService.updateTracking(id, trackingNumber.trim(), courier.trim() || undefined);
+      await orderService.updateOrderStatus(id, 'shipped');
+      setShipModalVisible(false);
+      refresh();
+    } catch (e) {
+      Alert.alert('', (e as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (!id) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
         <ScreenHeader title={t('merchant.orders') || 'Detail Order'} />
         <View style={styles.center}>
           <Text style={{ color: colors.textSecondary }}>ID tidak valid</Text>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (isLoading && !order) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
         <ScreenHeader title={t('merchant.orders') || 'Detail Order'} />
         <View style={styles.center}>
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (error || !order) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
         <ScreenHeader title={t('merchant.orders') || 'Detail Order'} />
         <View style={styles.center}>
           <Text style={{ color: colors.error }}>{error?.message ?? 'Order tidak ditemukan'}</Text>
@@ -80,15 +110,18 @@ export const OrderDetailScreen: React.FC = () => {
             <Text style={{ color: colors.surface }}>{t('common.retry') || 'Coba lagi'}</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   const canAccept = order.status === 'pending';
   const canCancel = order.status === 'pending';
+  const canMarkPacking = order.status === 'paid';
+  const canMarkShipped = order.status === 'packing';
+  const canMarkCompleted = order.status === 'shipped';
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
       <ScreenHeader title={t('merchant.orders') ? 'Detail Order' : 'Detail Order'} />
       <ScrollView
         style={styles.scroll}
@@ -100,6 +133,29 @@ export const OrderDetailScreen: React.FC = () => {
           <Text style={[styles.label, { color: colors.textSecondary }]}>Status</Text>
           <Text style={[styles.value, { color: colors.primary }]}>{order.status}</Text>
         </View>
+
+        {order.shippingAddress && (
+          <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Alamat pengiriman</Text>
+            {order.shippingAddress.recipientName ? <Text style={[styles.value, { color: colors.text }]}>{order.shippingAddress.recipientName}</Text> : null}
+            {order.shippingAddress.phone ? <Text style={[styles.meta, { color: colors.textSecondary }]}>{order.shippingAddress.phone}</Text> : null}
+            {order.shippingAddress.address ? <Text style={[styles.meta, { color: colors.text }]}>{order.shippingAddress.address}</Text> : null}
+            {(order.shippingAddress.city || order.shippingAddress.province) && (
+              <Text style={[styles.meta, { color: colors.textSecondary }]}>
+                {[order.shippingAddress.city, order.shippingAddress.province, order.shippingAddress.postalCode].filter(Boolean).join(', ')}
+              </Text>
+            )}
+          </View>
+        )}
+
+        {order.trackingNumber && (
+          <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Resi / Pengiriman</Text>
+            {order.courier ? <Text style={[styles.meta, { color: colors.textSecondary }]}>{order.courier}</Text> : null}
+            <Text style={[styles.value, { color: colors.text }]}>{order.trackingNumber}</Text>
+          </View>
+        )}
+
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('order.items') || 'Item'}</Text>
           {order.items.map((item, i) => (
@@ -127,13 +183,60 @@ export const OrderDetailScreen: React.FC = () => {
             <Text style={[styles.btnText, { color: colors.surface }]}>{t('order.markPaid') || 'Tandai Lunas'}</Text>
           </TouchableOpacity>
         )}
+        {canMarkPacking && (
+          <TouchableOpacity style={[styles.btn, { backgroundColor: colors.primary }]} onPress={() => handleStatus('packing')}>
+            <Text style={[styles.btnText, { color: colors.surface }]}>Mulai packing</Text>
+          </TouchableOpacity>
+        )}
+        {canMarkShipped && (
+          <TouchableOpacity style={[styles.btn, { backgroundColor: colors.primary }]} onPress={openShipModal}>
+            <Text style={[styles.btnText, { color: colors.surface }]}>Dikirim (input resi)</Text>
+          </TouchableOpacity>
+        )}
+        {canMarkCompleted && (
+          <TouchableOpacity style={[styles.btn, { backgroundColor: colors.primary }]} onPress={() => handleStatus('completed')}>
+            <Text style={[styles.btnText, { color: colors.surface }]}>Selesai</Text>
+          </TouchableOpacity>
+        )}
         {canCancel && (
           <TouchableOpacity style={[styles.btnOutlined, { borderColor: colors.error }]} onPress={handleCancel}>
             <Text style={[styles.btnOutlinedText, { color: colors.error }]}>{t('order.cancelOrder') || 'Batalkan Order'}</Text>
           </TouchableOpacity>
         )}
       </ScrollView>
-    </View>
+
+      <Modal visible={shipModalVisible} transparent animationType="fade">
+        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setShipModalVisible(false)}>
+          <View style={[styles.modalContent, { backgroundColor: colors.surface }]} onStartShouldSetResponder={() => true}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Input resi pengiriman</Text>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>Kurir</Text>
+            <TextInput
+              style={[styles.modalInput, { backgroundColor: colors.background, color: colors.text, borderColor: colors.border }]}
+              value={courier}
+              onChangeText={setCourier}
+              placeholder="JNE, J&T, dll"
+              placeholderTextColor={colors.textSecondary}
+            />
+            <Text style={[styles.label, { color: colors.textSecondary }]}>No. resi</Text>
+            <TextInput
+              style={[styles.modalInput, { backgroundColor: colors.background, color: colors.text, borderColor: colors.border }]}
+              value={trackingNumber}
+              onChangeText={setTrackingNumber}
+              placeholder="Nomor resi"
+              placeholderTextColor={colors.textSecondary}
+            />
+            <View style={styles.modalActions}>
+              <TouchableOpacity style={[styles.modalBtn, { backgroundColor: colors.border, marginRight: 6 }]} onPress={() => setShipModalVisible(false)}>
+                <Text style={{ color: colors.text }}>Batal</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.modalBtn, { backgroundColor: colors.primary, marginLeft: 6 }]} onPress={handleMarkShipped} disabled={saving}>
+                {saving ? <ActivityIndicator size="small" color={colors.surface} /> : <Text style={{ color: colors.surface }}>Tandai dikirim</Text>}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+    </SafeAreaView>
   );
 };
 
@@ -157,4 +260,11 @@ const styles = StyleSheet.create({
   btnOutlinedText: { fontSize: 16 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: 24 },
   retryBtn: { marginTop: 12, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 8 },
+  meta: { fontSize: 14, marginBottom: 4 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 24 },
+  modalContent: { borderRadius: 12, padding: 20 },
+  modalTitle: { fontSize: 18, fontWeight: '600', marginBottom: 16 },
+  modalInput: { borderWidth: 1, borderRadius: 8, padding: 12, fontSize: 16, marginBottom: 12 },
+  modalActions: { flexDirection: 'row', marginTop: 8 },
+  modalBtn: { flex: 1, padding: 14, borderRadius: 8, alignItems: 'center' },
 });

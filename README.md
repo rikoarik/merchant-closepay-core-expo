@@ -1,6 +1,6 @@
-# Member Closepay – Expo
+# Merchant Closepay – Expo
 
-Aplikasi member Closepay (React Native / Expo). **Full Expo** — managed workflow, bisa dijalankan di **Expo Go** (iOS & Android). Web didukung dengan viewport mobile; NFC/BLE di Expo Go di-stub.
+Aplikasi merchant Closepay (React Native / Expo). **Full Expo** — managed workflow, bisa dijalankan di **Expo Go** (iOS & Android). Web didukung dengan viewport mobile; NFC/BLE di Expo Go di-stub.
 
 ---
 
@@ -31,7 +31,7 @@ Aplikasi member Closepay (React Native / Expo). **Full Expo** — managed workfl
 
 ```bash
 git clone <repo-url>
-cd member-closepay-expo
+cd merchant-closepay-expo
 npm install
 ```
 
@@ -175,6 +175,8 @@ APK release: `android/app/build/outputs/apk/release/app-release.apk`.
 | `ios` | `expo run:ios` | Build & run iOS |
 | `build:web` | `expo export -p web` + workbox | Export web ke `dist/` |
 | `build:android:release` | `expo run:android --variant release` | APK release |
+| `eas:build:android` | `eas build --platform android --profile preview` | EAS build Android (preview) |
+| `eas:build:ios` | `eas build --platform ios --profile preview` | EAS build iOS (preview) |
 | `lint` | `eslint .` | Lint |
 | `typecheck` | `tsc --noEmit` | Type check |
 | `perf:build` | timed `expo export -p web` | Ukur waktu export web |
@@ -186,26 +188,26 @@ APK release: `android/app/build/outputs/apk/release/app-release.apk`.
 ## Struktur project
 
 ```
-member-closepay-expo/
+merchant-closepay-expo/
 ├── app.config.js          # Config Expo (env → extra)
 ├── app.json               # Manifest Expo
 ├── App.tsx                # Root component
 ├── index.ts               # Entry
 ├── apps/
-│   └── member-base/       # App member: config, screens, components
+│   └── merchant-base/     # App merchant: config, screens, components
 │       ├── config/        # app.config.ts, theme
 │       └── src/
 ├── packages/
 │   ├── core/              # Auth, config, theme, i18n, account, navigation, notification, security
 │   ├── experience-core/   # Tab/widget mapping, quick menu, HomeTabSettings, QuickMenuSettings
-│   └── plugins/           # balance, payment, marketplace, invoice, donasi-zakat, card-transaction, dll.
+│   └── plugins/           # balance, payment, invoice, catalog, order, fnb-merchant, kso, dll.
 ├── assets/
 ├── dist/                  # Output export web (setelah build:web)
 └── android/               # Ada setelah prebuild (expo run:android)
 ```
 
 - **Path aliases:** `@core/*`, `@experience-core`, `@plugins/*`, `@app/*` (lihat `tsconfig.json` dan `metro.config.js`).
-- **Plugin:** Setiap plugin punya `plugin.manifest.json` dan export di `index.ts`; didaftarkan di `apps/member-base/bootstrap/plugins.ts`.
+- **Plugin:** Setiap plugin punya `plugin.manifest.json` dan export di `index.ts`; didaftarkan di `apps/merchant-base/bootstrap/plugins.ts`.
 
 ---
 
@@ -216,11 +218,11 @@ member-closepay-expo/
 Proyek sudah terhubung ke EAS (project ID di `app.json`). Build dan submit ke app store via EAS:
 
 1. **Login** (sekali): `npx eas login`
-2. **Connect project** (jika belum): `npx eas-cli@latest init --id 828900b1-74b1-40f8-85ae-3eba6a407514`
+2. **Connect project** (jika belum): `npx eas-cli@latest init --id 7caefdd5-0ce4-46e4-a30d-8662f2ed1504`
 3. **Build**: `npx eas build --platform all`
 4. **Build + submit ke store**: `npx eas build --platform all --auto-submit`
 
-Credentials (Apple ID, Google Play service account) diatur di [expo.dev](https://expo.dev) → Project → Credentials. Untuk Android: upload keystore `closepay-member-keystore.keystore` di dashboard (alias: `closepaymember77`, store/key password: sesuai yang dipakai tim). Lihat [EAS Build](https://docs.expo.dev/build/introduction/) dan [EAS Submit](https://docs.expo.dev/submit/introduction/).
+Credentials (Apple ID, Google Play service account) diatur di [expo.dev](https://expo.dev) → Project → Credentials. Untuk Android: upload keystore (mis. `closepay-merchant.keystore`) di dashboard; alias dan password sesuai yang dipakai tim. Lihat [EAS Build](https://docs.expo.dev/build/introduction/) dan [EAS Submit](https://docs.expo.dev/submit/introduction/).
 
 ### Web (static)
 
@@ -291,7 +293,7 @@ Untuk fitur penuh (NFC/BLE, push production, FreeRASP), gunakan **development bu
 
 ## Dependency & path aliases
 
-- **Path aliases:** `@core/*` → `packages/core/*`, `@experience-core` → `packages/experience-core`, `@plugins/*` → `packages/plugins/*`, `@app/*` → `apps/member-base/src/*`.
+- **Path aliases:** `@core/*` → `packages/core/*`, `@experience-core` → `packages/experience-core`, `@plugins/*` → `packages/plugins/*`, `@app/*` → `apps/merchant-base/src/*`.
 - Config: `babel.config.js`, `tsconfig.json`, `metro.config.js`.
 
 ---

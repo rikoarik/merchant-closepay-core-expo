@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { StyleSheet, View, Platform, Text } from 'react-native';
+import { StyleSheet, View, Platform, Text, Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import MerchantbaseApp from './apps/merchant-base';
 
@@ -36,7 +36,25 @@ class AppErrorBoundary extends React.Component<
   }
 }
 
+const getWebContentMaxWidth = (width: number) => {
+  if (width < 768) return 414;
+  if (width < 1024) return 768;
+  return 1024;
+};
+
 export default function App() {
+  const [windowWidth, setWindowWidth] = useState(() =>
+    Platform.OS === 'web' ? Dimensions.get('window').width : 414,
+  );
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const sub = Dimensions.addEventListener('change', ({ window }) => {
+      setWindowWidth(window.width);
+    });
+    return () => sub?.remove();
+  }, []);
+
   const content = (
     <AppErrorBoundary>
       <StatusBar style="auto" />
@@ -45,9 +63,10 @@ export default function App() {
   );
 
   if (Platform.OS === 'web') {
+    const contentMaxWidth = getWebContentMaxWidth(windowWidth);
     return (
       <View style={styles.webOuter}>
-        <View style={styles.webInner}>
+        <View style={[styles.webInner, { maxWidth: contentMaxWidth }]}>
           <GestureHandlerRootView style={styles.root}>
             {content}
           </GestureHandlerRootView>
@@ -62,8 +81,6 @@ export default function App() {
     </GestureHandlerRootView>
   );
 }
-
-const MOBILE_MAX_WIDTH = 414;
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
@@ -86,7 +103,6 @@ const styles = StyleSheet.create({
   },
   webInner: {
     width: '100%',
-    maxWidth: MOBILE_MAX_WIDTH,
     flex: 1,
     minHeight: '100%',
     backgroundColor: '#f5f5f5',

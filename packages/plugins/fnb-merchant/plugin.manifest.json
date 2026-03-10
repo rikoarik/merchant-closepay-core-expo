@@ -5,7 +5,7 @@
   "description": "FnB menu and order management for merchant",
   "type": "segment-plugin",
   "author": "Closepay Team",
-  "dependencies": ["balance", "payment"],
+  "dependencies": ["balance", "payment", "catalog"],
   "exports": {
     "components": [],
     "hooks": [],
@@ -14,7 +14,8 @@
       "FnB": "FnBScreen",
       "FnBMenuManage": "FnBMenuManageScreen",
       "FnBOrderInbox": "FnBOrderInboxScreen",
-      "FnBOrderDetail": "FnBOrderDetailScreen"
+      "FnBOrderDetail": "FnBOrderDetailScreen",
+      "FnBQR": "FnBQRScreen"
     }
   },
   "routes": [
@@ -45,6 +46,13 @@
       "component": "FnBOrderDetailScreen",
       "permissions": ["read:fnb-merchant"],
       "meta": { "title": "Detail Order FnB", "showInMenu": false }
+    },
+    {
+      "name": "FnBQR",
+      "path": "/fnb-merchant/qr",
+      "component": "FnBQRScreen",
+      "permissions": ["read:fnb-merchant"],
+      "meta": { "title": "QR Toko / Meja", "showInMenu": true }
     }
   ],
   "permissions": ["read:fnb-merchant", "write:fnb-merchant"]

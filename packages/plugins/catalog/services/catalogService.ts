@@ -12,6 +12,9 @@ import type {
   Category,
   CategoryCreatePayload,
   CategoryUpdatePayload,
+  Store,
+  StoreUpdatePayload,
+  OperatingHours,
 } from '../models';
 
 const MOCK_PRODUCTS: Product[] = [
@@ -42,8 +45,25 @@ const MOCK_CATEGORIES: Category[] = [
   { id: 'cat2', name: 'Makanan', slug: 'makanan', sortOrder: 1, createdAt: new Date(), updatedAt: new Date() },
 ];
 
+const DAY_KEYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
+const defaultDayHours: OperatingHours = Object.fromEntries(
+  DAY_KEYS.map(d => [d, { open: '08:00', close: '22:00', closed: false }])
+) as OperatingHours;
+
+const MOCK_STORE: Store = {
+  id: 'store1',
+  name: 'Toko Saya',
+  address: 'Jl. Contoh No. 1',
+  description: 'Deskripsi toko',
+  operatingHours: defaultDayHours,
+  delivery: { enabled: true, radiusKm: 5, deliveryFee: 10000, minOrderFreeDelivery: 50000 },
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
 let mockProducts = [...MOCK_PRODUCTS];
 let mockCategories = [...MOCK_CATEGORIES];
+let mockStore = { ...MOCK_STORE };
 
 const USE_MOCK = true; // Set false when backend is ready
 
@@ -58,6 +78,8 @@ export interface CatalogService {
   createCategory(payload: CategoryCreatePayload): Promise<Category>;
   updateCategory(id: string, payload: CategoryUpdatePayload): Promise<Category>;
   deleteCategory(id: string): Promise<void>;
+  getStore(): Promise<Store | null>;
+  updateStore(payload: StoreUpdatePayload): Promise<Store>;
 }
 
 class CatalogServiceImpl implements CatalogService {
@@ -186,6 +208,25 @@ class CatalogServiceImpl implements CatalogService {
       return;
     }
     await axiosInstance.delete(`/merchant/catalog/categories/${id}`);
+  }
+
+  async getStore(): Promise<Store | null> {
+    if (USE_MOCK) return { ...mockStore };
+    try {
+      const { data } = await axiosInstance.get<Store>('/merchant/catalog/store');
+      return data;
+    } catch {
+      return null;
+    }
+  }
+
+  async updateStore(payload: StoreUpdatePayload): Promise<Store> {
+    if (USE_MOCK) {
+      mockStore = { ...mockStore, ...payload, updatedAt: new Date() };
+      return { ...mockStore };
+    }
+    const { data } = await axiosInstance.put<Store>('/merchant/catalog/store', payload);
+    return data;
   }
 }
 

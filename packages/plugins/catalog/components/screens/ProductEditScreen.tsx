@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useTheme } from '@core/theme';
 import { ScreenHeader, getHorizontalPadding } from '@core/config';
@@ -96,29 +97,29 @@ export const ProductEditScreen: React.FC = () => {
 
   if (!id) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
         <ScreenHeader title={t('merchant.products') || 'Edit Produk'} />
         <View style={styles.center}>
           <Text style={{ color: colors.textSecondary }}>ID tidak valid</Text>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (isLoading && !product) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
         <ScreenHeader title={t('merchant.products') || 'Edit Produk'} />
         <View style={styles.center}>
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (error || !product) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
         <ScreenHeader title={t('merchant.products') || 'Edit Produk'} />
         <View style={styles.center}>
           <Text style={{ color: colors.error }}>{error?.message ?? 'Produk tidak ditemukan'}</Text>
@@ -126,12 +127,12 @@ export const ProductEditScreen: React.FC = () => {
             <Text style={{ color: colors.surface }}>{t('common.retry') || 'Coba lagi'}</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
       <ScreenHeader title={t('merchant.products') ? 'Edit Produk' : 'Edit Produk'} />
       <ScrollView
         style={styles.scroll}
@@ -200,7 +201,7 @@ export const ProductEditScreen: React.FC = () => {
           <Text style={[styles.btnDeleteText, { color: colors.error }]}>{t('common.delete') || 'Hapus'}</Text>
         </TouchableOpacity>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

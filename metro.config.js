@@ -9,7 +9,7 @@ const ALIAS = {
   '@core': path.resolve(projectRoot, 'packages/core'),
   '@experience-core': path.resolve(projectRoot, 'packages/experience-core'),
   '@plugins': path.resolve(projectRoot, 'packages/plugins'),
-  '@app': path.resolve(projectRoot, 'apps/member-base/src'),
+  '@app': path.resolve(projectRoot, 'apps/merchant-base/src'),
 };
 
 const originalResolveRequest = config.resolver.resolveRequest;

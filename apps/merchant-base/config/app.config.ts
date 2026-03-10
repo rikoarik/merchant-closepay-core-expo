@@ -68,7 +68,7 @@ export const appConfig: AppConfig = {
     fixedTopCount: 3,
   },
 
-  showQuickMenuSettingsInProfile: false,
+  showQuickMenuSettingsInProfile: true,
 
   // ============================================================================
   // BRANDING

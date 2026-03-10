@@ -26,6 +26,14 @@ const MOCK_ORDERS: Order[] = [
     subtotal: 50000,
     total: 50000,
     status: 'paid',
+    shippingAddress: {
+      recipientName: 'Budi Santoso',
+      phone: '08123456789',
+      address: 'Jl. Merdeka No. 10',
+      city: 'Jakarta Selatan',
+      province: 'DKI Jakarta',
+      postalCode: '12345',
+    },
     createdAt: new Date(Date.now() - 86400000),
     updatedAt: new Date(),
   },
@@ -40,6 +48,7 @@ export interface OrderService {
   getOrder(orderId: string): Promise<Order>;
   getOrders(filters?: OrderFilters): Promise<Order[]>;
   updateOrderStatus(orderId: string, status: Order['status']): Promise<Order>;
+  updateTracking(orderId: string, trackingNumber: string, courier?: string): Promise<Order>;
   cancelOrder(orderId: string): Promise<Order>;
 }
 
@@ -105,6 +114,25 @@ class OrderServiceImpl implements OrderService {
       return mockOrders[idx];
     }
     const { data } = await axiosInstance.patch<Order>(`/merchant/orders/${orderId}/status`, { status });
+    return parseOrder(data);
+  }
+
+  async updateTracking(orderId: string, trackingNumber: string, courier?: string): Promise<Order> {
+    if (USE_MOCK) {
+      const idx = mockOrders.findIndex(o => o.id === orderId);
+      if (idx === -1) throw new Error('Order not found');
+      mockOrders[idx] = {
+        ...mockOrders[idx],
+        trackingNumber: trackingNumber.trim() || undefined,
+        courier: courier?.trim() || undefined,
+        updatedAt: new Date(),
+      };
+      return mockOrders[idx];
+    }
+    const { data } = await axiosInstance.patch<Order>(`/merchant/orders/${orderId}/tracking`, {
+      trackingNumber: trackingNumber.trim(),
+      courier: courier?.trim(),
+    });
     return parseOrder(data);
   }
 

@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useTheme } from '@core/theme';
 import { ScreenHeader, getHorizontalPadding } from '@core/config';
@@ -50,29 +51,29 @@ export const KsoDetailScreen: React.FC = () => {
 
   if (!id) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
         <ScreenHeader title={t('kso.detail') || 'Detail KSO'} />
         <View style={styles.center}>
           <Text style={{ color: colors.textSecondary }}>ID tidak valid</Text>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (isLoading && !kso) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
         <ScreenHeader title={t('kso.detail') || 'Detail KSO'} />
         <View style={styles.center}>
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (error || !kso) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
         <ScreenHeader title={t('kso.detail') || 'Detail KSO'} />
         <View style={styles.center}>
           <Text style={{ color: colors.error }}>{error?.message ?? 'KSO tidak ditemukan'}</Text>
@@ -80,14 +81,14 @@ export const KsoDetailScreen: React.FC = () => {
             <Text style={{ color: colors.surface }}>{t('common.retry') || 'Coba lagi'}</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   const formatDate = (d: Date) => (d instanceof Date ? d.toLocaleDateString('id-ID') : String(d));
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
       <ScreenHeader
         title={kso.partnerName}
         rightComponent={
@@ -150,7 +151,7 @@ export const KsoDetailScreen: React.FC = () => {
           <Text style={[styles.btnText, { color: colors.surface }]}>{t('kso.transaction') || 'Lihat Transaksi'}</Text>
         </TouchableOpacity>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

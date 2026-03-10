@@ -1,12 +1,26 @@
 /**
  * FnB Merchant - FnB order model (incoming orders for merchant)
  */
+export interface FnBOrderItemVariant {
+  id?: string;
+  name: string;
+  price: number;
+}
+
+export interface FnBOrderItemAddon {
+  id?: string;
+  name: string;
+  price: number;
+}
+
 export interface FnBOrderItem {
   menuItemId: string;
   name: string;
   quantity: number;
   price: number;
   subtotal: number;
+  variant?: FnBOrderItemVariant;
+  addons?: FnBOrderItemAddon[];
 }
 
 export interface FnBOrder {
@@ -17,6 +31,8 @@ export interface FnBOrder {
   status: 'pending' | 'confirmed' | 'preparing' | 'ready' | 'completed' | 'cancelled';
   customerName?: string;
   notes?: string;
+  rejectReason?: string;
+  paymentLink?: string;
   createdAt: Date;
   updatedAt: Date;
 }

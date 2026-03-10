@@ -14,6 +14,14 @@ const MOCK_MENU: FnBMenuItem[] = [
     category: 'Makanan',
     available: true,
     sortOrder: 0,
+    variants: [
+      { id: 'v1', name: 'Porsi Kecil', price: 0 },
+      { id: 'v2', name: 'Porsi Besar', price: 5000 },
+    ],
+    addons: [
+      { id: 'a1', name: 'Telur', price: 3000 },
+      { id: 'a2', name: 'Ayam', price: 7000 },
+    ],
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -24,6 +32,10 @@ const MOCK_MENU: FnBMenuItem[] = [
     category: 'Minuman',
     available: true,
     sortOrder: 1,
+    variants: [
+      { id: 'v3', name: 'Normal', price: 0 },
+      { id: 'v4', name: 'Jumbo', price: 2000 },
+    ],
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -32,9 +44,19 @@ const MOCK_MENU: FnBMenuItem[] = [
 const MOCK_FNB_ORDERS: FnBOrder[] = [
   {
     id: 'fo1',
-    items: [{ menuItemId: 'fnb1', name: 'Nasi Goreng', quantity: 1, price: 25000, subtotal: 25000 }],
-    subtotal: 25000,
-    total: 25000,
+    items: [
+      {
+        menuItemId: 'fnb1',
+        name: 'Nasi Goreng',
+        quantity: 1,
+        price: 25000,
+        subtotal: 35000,
+        variant: { id: 'v2', name: 'Porsi Besar', price: 5000 },
+        addons: [{ id: 'a1', name: 'Telur', price: 3000 }],
+      },
+    ],
+    subtotal: 35000,
+    total: 35000,
     status: 'pending',
     customerName: 'Pelanggan',
     createdAt: new Date(),
@@ -55,6 +77,8 @@ export interface FnBMerchantService {
   getOrders(filters?: FnBOrderFilters): Promise<FnBOrder[]>;
   getOrder(id: string): Promise<FnBOrder | null>;
   updateOrderStatus(id: string, status: FnBOrder['status']): Promise<FnBOrder>;
+  rejectOrder(id: string, reason: string): Promise<FnBOrder>;
+  getOrderPaymentLink(orderId: string): string;
 }
 
 function parseFnBOrder(o: any): FnBOrder {
@@ -83,6 +107,8 @@ class FnBMerchantServiceImpl implements FnBMerchantService {
         available: payload.available ?? true,
         sortOrder: payload.sortOrder ?? mockMenu.length,
         description: payload.description,
+        variants: payload.variants?.length ? payload.variants.map((v, i) => ({ ...v, id: v.id || `v${Date.now()}_${i}` })) : undefined,
+        addons: payload.addons?.length ? payload.addons.map((a, i) => ({ ...a, id: a.id || `a${Date.now()}_${i}` })) : undefined,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -143,6 +169,26 @@ class FnBMerchantServiceImpl implements FnBMerchantService {
     }
     const { data } = await axiosInstance.patch<FnBOrder>(`/merchant/fnb/orders/${id}/status`, { status });
     return parseFnBOrder(data);
+  }
+
+  async rejectOrder(id: string, reason: string): Promise<FnBOrder> {
+    if (USE_MOCK) {
+      const idx = mockFnBOrders.findIndex(o => o.id === id);
+      if (idx === -1) throw new Error('Order not found');
+      mockFnBOrders[idx] = {
+        ...mockFnBOrders[idx],
+        status: 'cancelled',
+        rejectReason: reason.trim() || undefined,
+        updatedAt: new Date(),
+      };
+      return mockFnBOrders[idx];
+    }
+    const { data } = await axiosInstance.patch<FnBOrder>(`/merchant/fnb/orders/${id}/reject`, { reason });
+    return parseFnBOrder(data);
+  }
+
+  getOrderPaymentLink(orderId: string): string {
+    return `closepay://pay/fnb/order/${orderId}`;
   }
 }
 
