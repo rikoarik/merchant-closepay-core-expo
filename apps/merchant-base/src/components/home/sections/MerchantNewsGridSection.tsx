@@ -11,7 +11,7 @@ import {
   Image,
   ImageSourcePropType,
 } from "react-native";
-import { useTheme } from "@core/theme";
+import { useTheme, type ThemeColors } from "@core/theme";
 import { useTranslation } from "@core/i18n";
 import {
   scale,
@@ -100,7 +100,7 @@ MerchantNewsGridSection.displayName = "MerchantNewsGridSection";
 
 interface NewsGridCardProps {
   item: NewsItem;
-  colors: Record<string, string>;
+  colors: ThemeColors;
   onPress?: (item: NewsItem) => void;
   formatDate: (date: Date) => string;
 }
@@ -122,7 +122,7 @@ const NewsGridCard: React.FC<NewsGridCardProps> = React.memo(
           resizeMode="cover"
           onError={() => setImageError(true)}
         />
-        <View style={styles.cardContent}>
+        <View style={styles.cardContentWrap}>
           <Text
             style={[styles.cardTitle, { color: colors.text }]}
             numberOfLines={2}
@@ -160,6 +160,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   card: {
+    flex: 1,
     borderRadius: scale(12),
     borderWidth: 1,
     overflow: "hidden",
@@ -169,8 +170,11 @@ const styles = StyleSheet.create({
     height: moderateVerticalScale(100),
     backgroundColor: "#f0f0f0",
   },
-  cardContent: {
+  cardContentWrap: {
+    flex: 1,
+    minHeight: scale(56),
     padding: scale(10),
+    justifyContent: "space-between",
   },
   cardTitle: {
     fontSize: getResponsiveFontSize("xsmall"),

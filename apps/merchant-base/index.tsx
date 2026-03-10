@@ -20,6 +20,7 @@ import { ProfileScreen } from '@core/account';
 import { PlaceholderScreen } from './src/screens/PlaceholderScreen';
 import { MerchantHomeScreen } from './src/screens/MerchantHomeScreen';
 import { NotificationScreen } from './src/screens/NotificationScreen';
+import { NewsScreen } from './src/screens/NewsScreen';
 import { BalanceScreen } from '@plugins/balance';
 import { ProductScreen } from '@plugins/catalog';
 import { OrderScreen } from '@plugins/order';
@@ -42,6 +43,7 @@ function MerchantBaseAppContent(): React.JSX.Element {
     const appScreens = (
       <>
         <Stack.Screen name="Notifications" component={NotificationScreen} />
+        <Stack.Screen name="News" component={NewsScreen} />
         <Stack.Screen name="ReceivePayment" component={PlaceholderScreen} />
         <Stack.Screen name="Settings" component={ProfileScreen} />
         <Stack.Screen name="Account" component={ProfileScreen} />

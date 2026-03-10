@@ -55,13 +55,15 @@ const replaceParams = (text: string, params?: TranslationParams): string => {
 
 /**
  * Get translation by key
+ * Safeguard: only use language if it exists in translations to avoid "Property 'x' doesn't exist" (e.g. 'he' from browser/storage).
  */
 export const getTranslation = (
   key: TranslationKey,
   language: Language,
   params?: TranslationParams
 ): string => {
-  const resource = translations[language];
+  const safeLang: Language = language === 'id' || language === 'en' ? language : 'id';
+  const resource = translations[safeLang];
   if (!resource) {
     console.warn(`Translation resource not found for language: ${language}`);
     return key; // Return key as fallback
@@ -94,10 +96,12 @@ export const loadLanguagePreference = async (): Promise<Language> => {
 
 /**
  * Save language preference ke storage
+ * Only persist 'id' or 'en'; ignore invalid codes to avoid runtime "Property 'x' doesn't exist".
  */
 export const saveLanguagePreference = async (language: Language): Promise<void> => {
+  const safeLang: Language = language === 'id' || language === 'en' ? language : 'id';
   try {
-    await SecureStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+    await SecureStorage.setItem(LANGUAGE_STORAGE_KEY, safeLang);
   } catch (error) {
     console.error('Failed to save language preference:', error);
     throw error;
@@ -113,12 +117,14 @@ export const getAvailableLanguages = (): Language[] => {
 
 /**
  * Get language display name
+ * Safeguard: fallback to 'id' if language is not supported (e.g. 'he').
  */
 export const getLanguageName = (language: Language): string => {
   const names: Record<Language, string> = {
     id: 'Bahasa Indonesia',
     en: 'English',
   };
-  return names[language];
+  const safeLang: Language = language === 'id' || language === 'en' ? language : 'id';
+  return names[safeLang];
 };
 

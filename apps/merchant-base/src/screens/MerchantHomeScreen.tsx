@@ -43,7 +43,7 @@ import { MerchantAllMenuSheet } from "../components/home/MerchantAllMenuSheet";
 import type { NewsItem } from "@core/config";
 
 const MAX_CONTENT_WIDTH = 500;
-const GRID_COLUMNS_PHONE = 5;
+const GRID_COLUMNS_PHONE = 4;
 const GRID_COLUMNS_TABLET = 5;
 const QUICK_ICON_BOX_SIZE = 44;
 const QUICK_GRID_RIGHT_COLUMNS = 4;
@@ -94,14 +94,16 @@ export const MerchantHomeScreen: React.FC = () => {
   const horizontalPadding = getHorizontalPadding();
   const verticalPadding = getVerticalPadding();
   const minTouchSize = getMinTouchTarget();
+  const extraPaddingPhone = isTabletOrWeb ? 0 : scale(8);
+  const contentHorizontalPadding = horizontalPadding + extraPaddingPhone;
 
   const contentMaxWidth = useMemo(() => {
-    const w = screenWidth - horizontalPadding * 2;
+    const w = screenWidth - contentHorizontalPadding * 2;
     if (Platform.OS === "web" || isTablet) {
       return Math.min(w, MAX_CONTENT_WIDTH);
     }
     return w;
-  }, [screenWidth, horizontalPadding, isTablet]);
+  }, [screenWidth, contentHorizontalPadding, isTablet]);
 
   const effectiveWidth = contentMaxWidth;
 
@@ -183,11 +185,11 @@ export const MerchantHomeScreen: React.FC = () => {
     () => [
       styles.content,
       {
-        paddingHorizontal: horizontalPadding,
+        paddingHorizontal: contentHorizontalPadding,
         paddingBottom: moderateVerticalScale(32) + verticalPadding + insets.bottom,
       },
     ],
-    [horizontalPadding, verticalPadding, insets.bottom],
+    [contentHorizontalPadding, verticalPadding, insets.bottom],
   );
 
   const contentWrapperStyle = useMemo(
@@ -412,7 +414,7 @@ export const MerchantHomeScreen: React.FC = () => {
               <MerchantNewsGridSection
                 items={latestNewsItems}
                 columns={4}
-                onViewAllPress={() => (navigation as any).navigate("Notifications")}
+                onViewAllPress={() => (navigation as any).navigate("News")}
               />
             </View>
           </View>
@@ -602,7 +604,6 @@ const styles = StyleSheet.create({
   newsFullWidthRow: {
     width: "100%",
     paddingHorizontal: getHorizontalPadding(),
-    marginTop: moderateVerticalScale(16),
   },
   gridRow: {
     flexDirection: "row",
@@ -616,12 +617,16 @@ const styles = StyleSheet.create({
     minWidth: GRID_COL_MIN,
   },
   gridColLeft: {
+    flex: 0.82,
+    maxWidth: 340,
     alignItems: "stretch",
   },
   gridColCenter: {
     alignItems: "stretch",
   },
   gridColRight: {
+    flex: 1.1,
+    maxWidth: 660,
     alignItems: "stretch",
   },
   gridCard: {
@@ -692,7 +697,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     alignSelf: "stretch",
     width: "100%",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     marginTop: moderateVerticalScale(8),
   },
   quickItem: {
